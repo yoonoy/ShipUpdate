@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Морской бой — Пиратская тема</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=EB+Garamond:wght@500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+  <header class="topbar">
+    <div class="brand">⚓ <span>☠️ Морской бой ☠️</span></div>
+    <div class="topbar-actions">
+      <button class="icon-btn" id="musicToggleBtn" title="Фоновая музыка">🎵</button>
+      <button class="icon-btn" id="soundToggleBtn" title="Переключить звук">🔊</button>
+      <button class="icon-btn" id="menuBtn" title="В главное меню">☰</button>
+    </div>
+  </header>
+
+  <audio id="bgMusic" src="music.mp3" loop preload="auto"></audio>
+
+  <main class="stage">
+
+    <!-- ===================== MENU SCREEN ===================== -->
+    <section class="screen" id="screen-menu">
+      <div class="panel menu-panel">
+        <h1 class="game-title">Морской бой</h1>
+        <p class="game-subtitle">Расставьте флот. Найдите врага. Отправьте его на дно первым.</p>
+        <div class="mode-choices">
+          <button class="mode-card" id="btnVsComputer">
+            <span class="mode-icon">🤖</span>
+            <span class="mode-name">Против компьютера</span>
+            <span class="mode-desc">Классическая партия против ИИ</span>
+          </button>
+          <button class="mode-card" id="btnVsFriend">
+            <span class="mode-icon">🎮</span>
+            <span class="mode-name">Два игрока (один экран)</span>
+            <span class="mode-desc">Хотсит-режим для игры с другом</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== SETUP SCREEN ===================== -->
+    <section class="screen hidden" id="screen-setup">
+      <div class="panel setup-panel">
+        <h2 class="setup-heading">Расстановка флота — <span id="setupPlayerLabel">Игрок 1</span></h2>
+        <p class="setup-hint" id="setupHint">Наведите на клетку и кликните, чтобы разместить корабль. Клавиша поворота —
+          кнопка ниже.</p>
+
+        <div class="setup-body">
+          <div class="dock" id="shipDock"></div>
+
+          <div class="board-frame">
+            <div class="corner"></div>
+            <div class="col-labels" id="setupColLabels"></div>
+            <div class="row-labels" id="setupRowLabels"></div>
+            <div class="board-surface">
+              <div class="grid" id="setupGrid"></div>
+              <div class="ships-layer" id="setupShips"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="action" id="rotateBtn">↻ Повернуть</button>
+          <button class="action" id="randomizeBtn">🎲 Случайно</button>
+          <button class="action" id="resetPlacementBtn">✕ Сброс</button>
+          <button class="action primary" id="setupReadyBtn" disabled>Готово ⚓</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PASS DEVICE SCREEN ===================== -->
+    <section class="screen hidden" id="screen-pass">
+      <div class="panel pass-panel">
+        <div class="pass-icon">🤝</div>
+        <h2 id="passMessage">Передайте устройство игроку</h2>
+        <p class="pass-hint">Убедитесь, что другой игрок не видит экран, затем нажмите «Готово».</p>
+        <button class="action primary" id="passReadyBtn">Готово</button>
+      </div>
+    </section>
+
+    <!-- ===================== BATTLE SCREEN ===================== -->
+    <section class="screen hidden" id="screen-battle">
+      <p id="status" class="status-line">Стреляйте по полю противника</p>
+
+      <div class="boards">
+        <div class="board-block">
+          <div class="board-block-head">
+            <h2 id="fleetLabel">Ваш флот</h2>
+            <button class="peek-btn" id="toggleFleetBtn">👁 Показать</button>
+          </div>
+          <div class="board-frame">
+            <div class="corner"></div>
+            <div class="col-labels" id="fleetColLabels"></div>
+            <div class="row-labels" id="fleetRowLabels"></div>
+            <div class="board-surface">
+              <div class="grid" id="fleetGrid"></div>
+              <div class="ships-layer" id="fleetShips"></div>
+              <div class="fleet-veil" id="fleetVeil">
+                <span class="veil-icon">👾</span>
+                <span class="veil-text">Флот скрыт<br>нажмите, чтобы посмотреть</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="board-block">
+          <h2 id="enemyLabel">Поле противника</h2>
+          <div class="board-frame">
+            <div class="corner"></div>
+            <div class="col-labels" id="enemyColLabels"></div>
+            <div class="row-labels" id="enemyRowLabels"></div>
+            <div class="board-surface">
+              <div class="grid enemy" id="enemyGrid"></div>
+              <div class="ships-layer" id="enemyShips"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="legend">Тёмный парусник с золотой окантовкой — ваш корабль. Взрыв — попадание, точка — промах. Корабль
+        противника раскрывается полностью, когда потоплен.</p>
+    </section>
+
+    <!-- ===================== GAME OVER SCREEN ===================== -->
+    <section class="screen hidden" id="screen-over">
+      <div class="panel over-panel">
+        <h2 id="overMessage">Игра окончена</h2>
+        <div class="controls">
+          <button class="action primary" id="playAgainBtn">Играть снова</button>
+          <button class="action" id="toMenuBtn">В меню</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
